@@ -558,7 +558,7 @@ declare namespace chrome.browsingData {
     interface RemovalOptions {
         /**
          * Optional.
-          * Since Chrome 21.
+         * Since Chrome 21.
          * An object whose properties specify which origin types ought to be cleared. If this object isn't specified, it defaults to clearing only "unprotected" origins. Please ensure that you really want to remove application data before adding 'protectedWeb' or 'extensions'.
          */
         originTypes?: OriginTypes;
@@ -599,7 +599,7 @@ declare namespace chrome.browsingData {
         history?: boolean;
         /**
          * Optional.
-          * Since Chrome 39.
+         * Since Chrome 39.
          * Service Workers.
          */
         serviceWorkers?: boolean;
