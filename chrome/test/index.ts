@@ -572,3 +572,67 @@ function test_chrome_bookmarks() {
     chrome.bookmarks.onImportBegan.addListener(function () { });
     chrome.bookmarks.onImportEnded.addListener(function () { });
 }
+
+function test_chrome_browserAction() {
+    chrome.browserAction.setTitle({ title: "Test Title" });
+    chrome.browserAction.setTitle({ title: "Test Title", tabId: 42 });
+
+    chrome.browserAction.getTitle({}, function (title) { });
+    chrome.browserAction.getTitle({ tabId: 42 }, function (title) { });
+
+    chrome.browserAction.setIcon({});
+    chrome.browserAction.setIcon({ imageData: "test" });
+    chrome.browserAction.setIcon({ imageData: "test", tabId: 42 });
+    chrome.browserAction.setIcon({ imageData: { "16": "test" } });
+    chrome.browserAction.setIcon({ imageData: { "16": "test" }, tabId: 42 });
+    chrome.browserAction.setIcon({ imageData: new ImageData(42, 42) });
+    chrome.browserAction.setIcon({ imageData: new ImageData(42, 42), tabId: 42 });
+    chrome.browserAction.setIcon({ path: "test" });
+    chrome.browserAction.setIcon({ path: { "16": "test" } });
+    chrome.browserAction.setIcon({ path: "test", tabId: 42 });
+    chrome.browserAction.setIcon({ path: { "16": "test" }, tabId: 42 });
+    chrome.browserAction.setIcon({ tabId: 42 });
+    chrome.browserAction.setIcon({}, function () { });
+    chrome.browserAction.setIcon({ imageData: "test" }, function () { });
+    chrome.browserAction.setIcon({ imageData: "test", tabId: 42 }, function () { });
+    chrome.browserAction.setIcon({ imageData: { "16": "test" } }, function () { });
+    chrome.browserAction.setIcon({ imageData: { "16": "test" }, tabId: 42 }, function () { });
+    chrome.browserAction.setIcon({ imageData: new ImageData(42, 42) }, function () { });
+    chrome.browserAction.setIcon({ imageData: new ImageData(42, 42), tabId: 42 }, function () { });
+    chrome.browserAction.setIcon({ path: "test" }, function () { });
+    chrome.browserAction.setIcon({ path: { "16": "test" } }, function () { });
+    chrome.browserAction.setIcon({ path: "test", tabId: 42 }, function () { });
+    chrome.browserAction.setIcon({ path: { "16": "test" }, tabId: 42 }, function () { });
+    chrome.browserAction.setIcon({ tabId: 42 }, function () { });
+
+    chrome.browserAction.setPopup({ popup: "" });
+    chrome.browserAction.setPopup({ popup: "Test Popup" });
+    chrome.browserAction.setPopup({ popup: "Test Popup", tabId: 42 });
+
+    chrome.browserAction.getPopup({}, function (popup) { });
+    chrome.browserAction.getPopup({ tabId: 42 }, function (popup) { });
+
+    chrome.browserAction.setBadgeText({ text: "Test Badge" });
+    chrome.browserAction.setBadgeText({ text: "Test Badge", tabId: 42 });
+
+    chrome.browserAction.getBadgeText({}, function (badgeText) { });
+    chrome.browserAction.getBadgeText({ tabId: 42 }, function (badgeText) { });
+
+    chrome.browserAction.setBadgeBackgroundColor({ color: [255, 0, 0, 255] });
+    chrome.browserAction.setBadgeBackgroundColor({ color: [255, 0, 0, 255], tabId: 42 });
+    chrome.browserAction.setBadgeBackgroundColor({ color: "red" });
+    chrome.browserAction.setBadgeBackgroundColor({ color: "red", tabId: 42 });
+    chrome.browserAction.setBadgeBackgroundColor({ color: "#FF0000" });
+    chrome.browserAction.setBadgeBackgroundColor({ color: "#FF0000", tabId: 42 });
+
+    chrome.browserAction.getBadgeBackgroundColor({}, function (color) { });
+    chrome.browserAction.getBadgeBackgroundColor({ tabId: 42 }, function (color) { });
+
+    chrome.browserAction.enable();
+    chrome.browserAction.enable(42);
+
+    chrome.browserAction.disable();
+    chrome.browserAction.disable(42);
+
+    chrome.browserAction.onClicked.addListener(function (tab) { /* Test to test tabs.Tab instances in test_chrome_tabs */ });
+}

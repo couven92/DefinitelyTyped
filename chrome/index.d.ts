@@ -496,13 +496,16 @@ declare namespace chrome.bookmarks {
 ////////////////////
 /**
  * Use browser actions to put icons in the main Google Chrome toolbar, to the right of the address bar. In addition to its icon, a browser action can also have a tooltip, a badge, and a popup.
- * Availability: Since Chrome 5.
+ * Availability: Since Chrome 14.
  * Manifest:  "browser_action": {...}
  */
 declare namespace chrome.browserAction {
+    /** @since Since Chrome 19. */
+    type ColorArray = [number, number, number, number];
+
     interface BadgeBackgroundColorDetails {
         /** An array of four integers in the range [0,255] that make up the RGBA color of the badge. For example, opaque red is [255, 0, 0, 255]. Can also be a string with a CSS value, with opaque red being #FF0000 or #F00. */
-        color: any;
+        color: ColorArray | string;
         /** Optional. Limits the change to when a particular tab is selected. Automatically resets when the tab is closed.  */
         tabId?: number;
     }
@@ -528,11 +531,11 @@ declare namespace chrome.browserAction {
 
     interface TabIconDetails {
         /** Optional. Either a relative image path or a dictionary {size -> relative image path} pointing to icon to be set. If the icon is specified as a dictionary, the actual image to be used is chosen depending on screen's pixel density. If the number of image pixels that fit into one screen space unit equals scale, then image with size scale * 19 will be selected. Initially only scales 1 and 2 will be supported. At least one image must be specified. Note that 'details.path = foo' is equivalent to 'details.imageData = {'19': foo}'  */
-        path?: any;
+        path?: string | Object;
         /** Optional. Limits the change to when a particular tab is selected. Automatically resets when the tab is closed.  */
         tabId?: number;
         /** Optional. Either an ImageData object or a dictionary {size -> ImageData} representing icon to be set. If the icon is specified as a dictionary, the actual image to be used is chosen depending on screen's pixel density. If the number of image pixels that fit into one screen space unit equals scale, then image with size scale * 19 will be selected. Initially only scales 1 and 2 will be supported. At least one image must be specified. Note that 'details.imageData = foo' is equivalent to 'details.imageData = {'19': foo}'  */
-        imageData?: ImageData;
+        imageData?: ImageData | string | Object;
     }
 
     interface PopupDetails {
@@ -545,8 +548,8 @@ declare namespace chrome.browserAction {
     interface BrowserClickedEvent extends chrome.events.Event<(tab: chrome.tabs.Tab) => void> {}
 
     /**
-     * Since Chrome 22.
      * Enables the browser action for a tab. By default, browser actions are enabled.
+     * @since Since Chrome 22.
      * @param tabId The id of the tab for which you want to modify the browser action.
      */
     export function enable(tabId?: number): void;
@@ -557,8 +560,8 @@ declare namespace chrome.browserAction {
     /** Sets the title of the browser action. This shows up in the tooltip. */
     export function setTitle(details: TitleDetails): void;
     /**
-     * Since Chrome 19.
      * Gets the badge text of the browser action. If no tab is specified, the non-tab-specific badge text is returned.
+     * @since Since Chrome 19.
      * @param callback The callback parameter should be a function that looks like this:
      * function(string result) {...};
      */
@@ -566,28 +569,28 @@ declare namespace chrome.browserAction {
     /** Sets the html document to be opened as a popup when the user clicks on the browser action's icon. */
     export function setPopup(details: PopupDetails): void;
     /**
-     * Since Chrome 22.
      * Disables the browser action for a tab.
+     * @since Since Chrome 22.
      * @param tabId The id of the tab for which you want to modify the browser action.
      */
     export function disable(tabId?: number): void;
     /**
-     * Since Chrome 19.
      * Gets the title of the browser action.
+     * @since Since Chrome 19.
      * @param callback The callback parameter should be a function that looks like this:
      * function(string result) {...};
      */
     export function getTitle(details: TabDetails, callback: (result: string) => void): void;
     /**
-     * Since Chrome 19.
      * Gets the background color of the browser action.
+     * @since Since Chrome 19.
      * @param callback The callback parameter should be a function that looks like this:
      * function( ColorArray result) {...};
      */
-    export function getBadgeBackgroundColor(details: TabDetails, callback: (result: number[]) => void): void;
+    export function getBadgeBackgroundColor(details: TabDetails, callback: (result: ColorArray) => void): void;
     /**
-     * Since Chrome 19.
      * Gets the html document set as the popup for this browser action.
+     * @since Since Chrome 19.
      * @param callback The callback parameter should be a function that looks like this:
      * function(string result) {...};
      */
