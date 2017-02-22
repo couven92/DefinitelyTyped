@@ -2652,11 +2652,19 @@ declare namespace chrome.events {
  * Availability: Since Chrome 5.
  */
 declare namespace chrome.extension {
+    /** The type of extension view. */
+    type ViewType = "tab" | "notification" | "popup";
+
     interface FetchProperties {
         /** Optional. The window to restrict the search to. If omitted, returns all views.  */
         windowId?: number;
         /** Optional. The type of view to get. If omitted, returns all views (including background pages and tabs). Valid values: 'tab', 'notification', 'popup'.  */
-        type?: string;
+        type?: ViewType;
+        /**
+         * Since Chrome 54.
+         * Find a view according to a tab id. If this field is omitted, returns all views.
+         */
+        tabId?: number;
     }
 
     interface LastError {
@@ -2672,7 +2680,7 @@ declare namespace chrome.extension {
      */
     var inIncognitoContext: boolean;
     /** Set for the lifetime of a callback if an ansychronous extension api has resulted in an error. If no error has occured lastError will be undefined. */
-    var lastError: LastError;
+    var lastError: LastError | undefined;
 
     /** Returns the JavaScript 'window' object for the background page running inside the current extension. Returns null if the extension has no background page. */
     export function getBackgroundPage(): Window | null;
