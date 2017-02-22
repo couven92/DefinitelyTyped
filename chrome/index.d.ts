@@ -22,6 +22,24 @@ interface Window {
  * Important: This API works only on Chrome OS.
  */
 declare namespace chrome.accessibilityFeatures {
+    /**
+     * One of
+     * • not_controllable: cannot be controlled by any extension
+     * • controlled_by_other_extensions: controlled by extensions with higher precedence
+     * • controllable_by_this_extension: can be controlled by this extension
+     * • controlled_by_this_extension: controlled by this extension
+     */
+    type LevelOfControl = "not_controllable" | "controlled_by_other_extensions" | "controllable_by_this_extension" | "controlled_by_this_extension";
+
+    /**
+     * One of
+     * • regular: setting for the regular profile (which is inherited by the incognito profile if not overridden elsewhere),
+     * • regular_only: setting for the regular profile only (not inherited by the incognito profile),
+     * • incognito_persistent: setting for the incognito profile that survives browser restarts (overrides regular preferences),
+     * • incognito_session_only: setting for the incognito profile that can only be set during an incognito session and is deleted when the incognito session ends (overrides regular and incognito_persistent preferences).
+     */
+    type Scope = "regular" | "regular_only" | "incognito_persistent" | "incognito_session_only";
+
     interface AccessibilityFeaturesGetArg {
         /** Optional. Whether to return the value that applies to the incognito session (default false).  */
         incognito?: boolean;
@@ -30,14 +48,7 @@ declare namespace chrome.accessibilityFeatures {
     interface AccessibilityFeaturesCallbackArg {
         /** The value of the setting. */
         value: any;
-        /**
-         * One of
-         * • not_controllable: cannot be controlled by any extension
-         * • controlled_by_other_extensions: controlled by extensions with higher precedence
-         * • controllable_by_this_extension: can be controlled by this extension
-         * • controlled_by_this_extension: controlled by this extension
-         */
-        levelOfControl: string;
+        levelOfControl: LevelOfControl;
         /** Optional. Whether the effective value is specific to the incognito session. This property will only be present if the incognito property in the details parameter of get() was true.  */
         incognitoSpecific?: boolean;
     }
@@ -48,32 +59,19 @@ declare namespace chrome.accessibilityFeatures {
          * Note that every setting has a specific value type, which is described together with the setting. An extension should not set a value of a different type.
          */
         value: any;
-        /**
-         * Optional.
-          * The scope of the ChromeSetting. One of
-         * • regular: setting for the regular profile (which is inherited by the incognito profile if not overridden elsewhere),
-         * • regular_only: setting for the regular profile only (not inherited by the incognito profile),
-         * • incognito_persistent: setting for the incognito profile that survives browser restarts (overrides regular preferences),
-         * • incognito_session_only: setting for the incognito profile that can only be set during an incognito session and is deleted when the incognito session ends (overrides regular and incognito_persistent preferences).
-         */
-        scope?: string;
+        /** Optional. The scope of the ChromeSetting (default: regular). */
+        scope?: Scope;
     }
 
     interface AccessibilityFeaturesClearArg {
-        /**
-         * Optional.
-          * The scope of the ChromeSetting. One of
-         * • regular: setting for the regular profile (which is inherited by the incognito profile if not overridden elsewhere),
-         * • regular_only: setting for the regular profile only (not inherited by the incognito profile),
-         * • incognito_persistent: setting for the incognito profile that survives browser restarts (overrides regular preferences),
-         * • incognito_session_only: setting for the incognito profile that can only be set during an incognito session and is deleted when the incognito session ends (overrides regular and incognito_persistent preferences).
-         */
-        scope?: string;
+        /** Optional. The scope of the ChromeSetting. */
+        scope?: Scope;
     }
 
     interface AccessibilityFeaturesSetting {
         /**
          * Gets the value of a setting.
+         * Permissions: "accessibilityFeatures.read"
          * @param details Which setting to consider.
          * @param callback The callback parameter should be a function that looks like this:
          * function(object details) {...};
@@ -81,6 +79,7 @@ declare namespace chrome.accessibilityFeatures {
         get(details: AccessibilityFeaturesGetArg, callback: (details: AccessibilityFeaturesCallbackArg) => void): void;
         /**
          * Sets the value of a setting.
+         * Permissions: "accessibilityFeatures.modify"
          * @param details Which setting to change.
          * @param callback Called at the completion of the set operation.
          * If you specify the callback parameter, it should be a function that looks like this:
@@ -89,6 +88,7 @@ declare namespace chrome.accessibilityFeatures {
         set(details: AccessibilityFeaturesSetArg, callback?: () => void): void;
         /**
          * Clears the setting, restoring any default value.
+         * Permissions: "accessibilityFeatures.modify"
          * @param details Which setting to clear.
          * @param callback Called at the completion of the clear operation.
          * If you specify the callback parameter, it should be a function that looks like this:
@@ -97,13 +97,75 @@ declare namespace chrome.accessibilityFeatures {
         clear(details: AccessibilityFeaturesClearArg, callback?: () => void): void;
     }
 
+    /**
+     * Spoken feedback (text-to-speech).
+     * ChromeOS only.
+     */
     var spokenFeedback: AccessibilityFeaturesSetting;
+    /**
+     * Enlarged cursor.
+     * ChromeOS only.
+     */
     var largeCursor: AccessibilityFeaturesSetting;
+    /**
+     * Sticky modifier keys (like shift or alt).
+     * ChromeOS only.
+     */
     var stickyKeys: AccessibilityFeaturesSetting;
+    /**
+     * High contrast rendering mode.
+     * ChromeOS only.
+     */
     var highContrast: AccessibilityFeaturesSetting;
+    /**
+     * Full screen magnification.
+     * ChromeOS only.
+     */
     var screenMagnifier: AccessibilityFeaturesSetting;
+    /**
+     * Auto mouse click after mouse stops moving.
+     * ChromeOS only.
+     */
     var autoclick: AccessibilityFeaturesSetting;
+    /**
+     * Virtual on-screen keyboard.
+     * ChromeOS only.
+     */
     var virtualKeyboard: AccessibilityFeaturesSetting;
+    /**
+     * Since Chrome 51.
+     * Caret highlighting.
+     * ChromeOS only.
+     */
+    var caretHighlight: AccessibilityFeaturesSetting;
+    /**
+     * Since Chrome 51.
+     * Cursor highlighting.
+     * ChromeOS only.
+     */
+    var cursorHighlight: AccessibilityFeaturesSetting;
+    /**
+     * Since Chrome 51.
+     * Focus highlighting.
+     * ChromeOS only.
+     */
+    var focusHighlight: AccessibilityFeaturesSetting;
+    /**
+     * Since Chrome 51.
+     * Select-to-speak.
+     * ChromeOS only.
+     */
+    var selectToSpeak: AccessibilityFeaturesSetting;
+    /**
+     * Since Chrome 51.
+     * Switch access.
+     * ChromeOS only.
+     */
+    var switchAccess: AccessibilityFeaturesSetting;
+    /**
+     * Since Chrome 42.
+     * ChromeOS only.
+     */
     var animationPolicy: AccessibilityFeaturesSetting;
 }
 
@@ -715,6 +777,101 @@ declare namespace chrome.browsingData {
 }
 
 ////////////////////
+// Certificate Provider
+////////////////////
+/**
+ * Use this API to expose certificates to the platform which can use these certificates for TLS authentications.
+ * Availability: Since Chrome 46.
+ * Permissions: "certificateProvider"
+ * Important: This API works only on Chrome OS.
+ */
+declare namespace chrome.certificateProvider {
+    type Hash = "MD5_SHA1" | "SHA1" | "SHA256" | "SHA384" | "SHA512";
+
+    /** The types of errors that can be presented to the user through the requestPin function. */
+    type PinRequestErrorType = "INVALID_PIN" | "INVALID_PUK" | "MAX_ATTEMPTS_EXCEEDED" | "UNKNOWN_ERROR";
+
+    interface CertificateInfo {
+        /** Must be the DER encoding of a X.509 certificate. Currently, only certificates of RSA keys are supported. */
+        certificate: ArrayBuffer;
+        /** Must be set to all hashes supported for this certificate. This extension will only be asked for signatures of digests calculated with one of these hash algorithms. This should be in order of decreasing hash preference. */
+        supportedHashes: Hash[];
+    }
+
+    interface SignRequest {
+        /**
+         * Since Chrome 57. Warning: this is the current Beta channel.
+         * The unique ID to be used by the extension should it need to call a method that requires it, e.g. requestPin.
+         */
+        signRequestId: number;
+        /** The digest that must be signed. */
+        digest: ArrayBuffer;
+        /** Refers to the hash algorithm that was used to create digest. */
+        hash: Hash;
+        /** The DER encoding of a X.509 certificate. The extension must sign digest using the associated private key. */
+        certificate: ArrayBuffer;
+    }
+
+    interface RequestPinDetails {
+        /** The ID given by Chrome in SignRequest. */
+        signRequestId: number;
+        /** Optional. The type of code requested. Default is PIN. */
+        requestType?: "PIN" | "PUK";
+        /** Optional. The error template displayed to the user. This should be set if the previous request failed, to notify the user of the failure reason.  */
+        errorType?: PinRequestErrorType;
+        /** Optional. The number of attempts left. This is provided so that any UI can present this information to the user. Chrome is not expected to enforce this, instead stopPinRequest should be called by the extension with errorType = MAX_ATTEMPTS_EXCEEDED when the number of pin requests is exceeded. */
+        attemptsLeft?: number;
+    }
+
+    interface RequestPinCallbackDetails {
+        /** Optional. The code provided by the user. Empty if user closed the dialog or some other error occurred.  */
+        userInput?: string;
+    }
+
+    /**
+     * Since Chrome 57. Warning: this is the current Beta channel.
+     * Requests the PIN from the user. Only one ongoing request at a time is allowed. The requests issued while another flow is ongoing are rejected. It's the extension's responsibility to try again later if another flow is in progress.
+     * @param details Contains the details about the requested dialog.
+     * @param callback Is called when the dialog is resolved with the user input, or when the dialog request finishes unsuccessfully (e.g. the dialog was canceled by the user or was not allowed to be shown).
+     * The callback parameter should be a function that looks like this:
+     * function(object details) {...};
+     */
+    export function requestPin(details: RequestPinDetails, callback: (details?: RequestPinCallbackDetails) => void): void;
+
+    interface StopPinRequestDetails {
+        /** The ID given by Chrome in SignRequest. */
+        signRequestId: number;
+        /** Optional. The error template. If present it is displayed to user. Intended to contain the reason for stopping the flow if it was caused by an error, e.g. MAX_ATTEMPTS_EXCEEDED. */
+        errorType?: PinRequestErrorType;
+    }
+
+    /**
+     * Since Chrome 57. Warning: this is the current Beta channel.
+     * Stops the pin request started by the requestPin function.
+     * @param details Contains the details about the reason for stopping the request flow.
+     * @param callback To be used by Chrome to send to the extension the status from their request to close PIN dialog for user.
+     * The callback parameter should be a function that looks like this:
+     * function() {...};
+     */
+    export function stopPinRequest(details: StopPinRequestDetails, callback: () => void): void;
+
+    interface CertificatesRequestedEvent extends chrome.events.Event<(reportCallback: (certificates: CertificateInfo[]) => void) => void> { }
+
+    interface SignDigestRequestedEvent extends chrome.events.Event<(request: SignRequest, reportCallback: (signature?: ArrayBuffer) => void) => void> { }
+
+    /**
+     * Since Chrome 47.
+     * This event fires every time the browser requests the current list of certificates provided by this extension. The extension must call reportCallback exactly once with the current list of certificates.
+     */
+    var onCertificatesRequested: CertificatesRequestedEvent;
+
+    /** 
+     * This event fires every time the browser needs to sign a message using a certificate provided by this extension in reply to an onCertificatesRequested event. The extension must sign the data in request using the appropriate algorithm and private key and return it by calling reportCallback. reportCallback must be called exactly once.
+     */
+    var onSignDigestRequested: SignDigestRequestedEvent;
+}
+
+////////////////////
 // Commands
 ////////////////////
 /**
@@ -755,26 +912,27 @@ declare namespace chrome.commands {
  * Permissions:  "contentSettings"
  */
 declare namespace chrome.contentSettings {
+    /**
+     * The scope of the ContentSetting. One of
+     * • regular: setting for regular profile (which is inherited by the incognito profile if not overridden elsewhere),
+     * • incognito_session_only: setting for incognito profile that can only be set during an incognito session and is deleted when the incognito session ends (overrides regular settings).
+     */
+    type Scope = "regular" | "incognito_session_only";
+
     interface ClearDetails {
-        /**
-         * Optional.
-          * Where to clear the setting (default: regular).
-         * The scope of the ContentSetting. One of
-         * * regular: setting for regular profile (which is inherited by the incognito profile if not overridden elsewhere),
-         * * incognito_session_only: setting for incognito profile that can only be set during an incognito session and is deleted when the incognito session ends (overrides regular settings).
-         */
-        scope?: string;
+        /** Optional. Where to clear the setting (default: regular). */
+        scope?: Scope;
     }
 
-    interface SetDetails {
+    interface SetDetails<T> {
         /** Optional. The resource identifier for the content type.  */
         resourceIdentifier?: ResourceIdentifier;
         /** The setting applied by this rule. See the description of the individual ContentSetting objects for the possible values. */
-        setting: any;
+        setting: T;
         /** Optional. The pattern for the secondary URL. Defaults to matching all URLs. For details on the format of a pattern, see Content Setting Patterns.  */
         secondaryPattern?: string;
         /** Optional. Where to set the setting (default: regular).  */
-        scope?: string;
+        scope?: Scope;
         /** The pattern for the primary URL. For details on the format of a pattern, see Content Setting Patterns. */
         primaryPattern: string;
     }
@@ -790,12 +948,12 @@ declare namespace chrome.contentSettings {
         primaryUrl: string;
     }
 
-    interface ReturnedDetails {
+    interface ReturnedDetails<T> {
         /** The content setting. See the description of the individual ContentSetting objects for the possible values. */
-        setting: any;
+        setting: T;
     }
 
-    interface ContentSetting {
+    interface ContentSetting<T> {
         /**
          * Clear all content setting rules set by this extension.
          * @param callback If you specify the callback parameter, it should be a function that looks like this:
@@ -807,7 +965,7 @@ declare namespace chrome.contentSettings {
          * @param callback If you specify the callback parameter, it should be a function that looks like this:
          * function() {...};
          */
-        set(details: SetDetails, callback?: () => void): void;
+        set(details: SetDetails<T>, callback?: () => void): void;
         /**
          * @param callback The callback parameter should be a function that looks like this:
          * function(array of ResourceIdentifier resourceIdentifiers) {...};
@@ -819,7 +977,7 @@ declare namespace chrome.contentSettings {
          * @param callback The callback parameter should be a function that looks like this:
          * function(object details) {...};
          */
-        get(details: GetDetails, callback: (details: ReturnedDetails) => void): void;
+        get(details: GetDetails, callback: (details: ReturnedDetails<T>) => void): void;
     }
 
     /** The only content type using resource identifiers is contentSettings.plugins. For more information, see Resource Identifiers. */
@@ -830,106 +988,123 @@ declare namespace chrome.contentSettings {
         description?: string;
     }
 
+    type AllowContentSettingType = "allow";
+    type AllowBlockContentSettingType = AllowContentSettingType | "block";
+    type AllowBlockAskContentSettingsType = AllowBlockContentSettingType | "ask";
+
     /**
      * Whether to allow cookies and other local data to be set by websites. One of
-     * allow: Accept cookies,
-     * block: Block cookies,
-     * session_only: Accept cookies only for the current session.
+     * • allow: Accept cookies,
+     * • block: Block cookies,
+     * • session_only: Accept cookies only for the current session.
      * Default is allow.
      * The primary URL is the URL representing the cookie origin. The secondary URL is the URL of the top-level frame.
      */
-    var cookies: ContentSetting;
+    var cookies: ContentSetting<AllowBlockContentSettingType | "session_only">;
     /**
      * Whether to allow sites to show pop-ups. One of
-     * allow: Allow sites to show pop-ups,
-     * block: Don't allow sites to show pop-ups.
+     * • allow: Allow sites to show pop-ups,
+     * • block: Don't allow sites to show pop-ups.
      * Default is block.
      * The primary URL is the URL of the top-level frame. The secondary URL is not used.
      */
-    var popups: ContentSetting;
+    var popups: ContentSetting<AllowBlockContentSettingType>;
     /**
      * Whether to run JavaScript. One of
-     * allow: Run JavaScript,
-     * block: Don't run JavaScript.
+     * • allow: Run JavaScript,
+     * • block: Don't run JavaScript.
      * Default is allow.
      * The primary URL is the URL of the top-level frame. The secondary URL is not used.
      */
-    var javascript: ContentSetting;
+    var javascript: ContentSetting<AllowBlockContentSettingType>;
     /**
      * Whether to allow sites to show desktop notifications. One of
-     * allow: Allow sites to show desktop notifications,
-     * block: Don't allow sites to show desktop notifications,
-     * ask: Ask when a site wants to show desktop notifications.
+     * • allow: Allow sites to show desktop notifications,
+     * • block: Don't allow sites to show desktop notifications,
+     * • ask: Ask when a site wants to show desktop notifications.
      * Default is ask.
      * The primary URL is the URL of the document which wants to show the notification. The secondary URL is not used.
      */
-    var notifications: ContentSetting;
+    var notifications: ContentSetting<AllowBlockAskContentSettingsType>;
     /**
      * Whether to run plugins. One of
-     * allow: Run plugins automatically,
-     * block: Don't run plugins automatically,
-     * detect_important_content: Only run automatically those plugins that are detected as the website's main content.
+     * • allow: Run plugins automatically,
+     * • block: Don't run plugins automatically,
+     * • detect_important_content: Only run automatically those plugins that are detected as the website's main content.
      * Default is allow.
      * The primary URL is the URL of the top-level frame. The secondary URL is not used.
      */
-    var plugins: ContentSetting;
+    var plugins: ContentSetting<AllowBlockContentSettingType | "detect_important_content">;
     /**
      * Whether to show images. One of
-     * allow: Show images,
-     * block: Don't show images.
+     * • allow: Show images,
+     * • block: Don't show images.
      * Default is allow.
      * The primary URL is the URL of the top-level frame. The secondary URL is the URL of the image.
      */
-    var images: ContentSetting;
+    var images: ContentSetting<AllowBlockContentSettingType>;
     /**
      * Since Chrome 42.
      * Whether to allow Geolocation. One of
-     * allow: Allow sites to track your physical location,
-     * block: Don't allow sites to track your physical location,
-     * ask: Ask before allowing sites to track your physical location.
+     * • allow: Allow sites to track your physical location,
+     * • block: Don't allow sites to track your physical location,
+     * • ask: Ask before allowing sites to track your physical location.
      * Default is ask.
      * The primary URL is the URL of the document which requested location data. The secondary URL is the URL of the top-level frame (which may or may not differ from the requesting URL).
      */
-    var location: ContentSetting;
+    var location: ContentSetting<AllowBlockAskContentSettingsType>;
     /**
      * Since Chrome 42.
-     * Whether to allow sites to toggle the fullscreen mode. One of
-     * allow: Allow sites to toggle the fullscreen mode,
-     * ask: Ask when a site wants to toggle the fullscreen mode.
-     * Default is ask.
-     * The primary URL is the URL of the document which requested to toggle the fullscreen mode. The secondary URL is the URL of the top-level frame (which may or may not differ from the requesting URL).
+     * @deprecated No longer has any effect. Fullscreen permission is now automatically granted for all sites. Value is always allow.
      */
-    var fullscreen: ContentSetting;
+    var fullscreen: ContentSetting<AllowContentSettingType>;
     /**
      * Since Chrome 42.
-     * Whether to allow sites to disable the mouse cursor. One of
-     * allow: Allow sites to disable the mouse cursor,
-     * block: Don't allow sites to disable the mouse cursor,
-     * ask: Ask when a site wants to disable the mouse cursor.
-     * Default is ask.
-     * The primary URL is the URL of the top-level frame. The secondary URL is not used.
+     * @deprecated No longer has any effect. Mouse lock permission is now automatically granted for all sites. Value is always allow.
      */
-    var mouselock: ContentSetting;
+    var mouselock: ContentSetting<AllowContentSettingType>;
     /**
      * Since Chrome 42.
      * Whether to allow sites to run plugins unsandboxed. One of
-     * allow: Allow sites to run plugins unsandboxed,
-     * block: Don't allow sites to run plugins unsandboxed,
-     * ask: Ask when a site wants to run a plugin unsandboxed.
+     * • allow: Allow sites to run plugins unsandboxed,
+     * • block: Don't allow sites to run plugins unsandboxed,
+     * • ask: Ask when a site wants to run a plugin unsandboxed.
      * Default is ask.
      * The primary URL is the URL of the top-level frame. The secondary URL is not used.
      */
-    var unsandboxedPlugins: ContentSetting;
+    var unsandboxedPlugins: ContentSetting<AllowBlockAskContentSettingsType>;
     /**
      * Since Chrome 42.
      * Whether to allow sites to download multiple files automatically. One of
-     * allow: Allow sites to download multiple files automatically,
-     * block: Don't allow sites to download multiple files automatically,
-     * ask: Ask when a site wants to download files automatically after the first file.
+     * • allow: Allow sites to download multiple files automatically,
+     * • block: Don't allow sites to download multiple files automatically,
+     * • ask: Ask when a site wants to download files automatically after the first file.
      * Default is ask.
      * The primary URL is the URL of the top-level frame. The secondary URL is not used.
      */
-    var automaticDownloads: ContentSetting;
+    var automaticDownloads: ContentSetting<AllowBlockAskContentSettingsType>;
+    /**
+     * Since Chrome 46.
+     * Whether to allow sites to access the microphone. One of
+     * • allow: Allow sites to access the microphone,
+     * • block: Don't allow sites to access the microphone,
+     * • ask: Ask when a site wants to access the microphone.
+     * Default is ask.
+     * The primary URL is the URL of the document which requested microphone access. The secondary URL is not used.
+     * NOTE: The 'allow' setting is not valid if both patterns are ''.
+     */
+    var microphone: ContentSetting<AllowBlockAskContentSettingsType>;
+    /**
+     * Since Chrome 46.
+     * Whether to allow sites to access the camera. One of
+     * • allow: Allow sites to access the camera,
+     * • block: Don't allow sites to access the camera,
+     * • ask: Ask when a site wants to access the camera.
+     * Default is ask.
+     * The primary URL is the URL of the document which requested camera access. The secondary URL is not used.
+     * NOTE: The 'allow' setting is not valid if both patterns are ''.
+     */
+    var camera: ContentSetting<AllowBlockAskContentSettingsType>;
 }
 
 ////////////////////
@@ -941,6 +1116,12 @@ declare namespace chrome.contentSettings {
  * Permissions:  "contextMenus"
  */
 declare namespace chrome.contextMenus {
+    /** The different contexts a menu can appear in. Specifying 'all' is equivalent to the combination of all other contexts except for 'launcher'. The 'launcher' context is only supported by apps and is used to add menu items to the context menu that appears when clicking on the app icon in the launcher/taskbar/dock/etc. Different platforms might put limitations on what is actually supported in a launcher context menu. */
+    type ContextType = "all" | "page" | "frame" | "selection" | "link" | "editable" | "image" | "video" | "audio" | "launcher" | "browser_action" | "page_action";
+
+    /** The type of menu item. */
+    type ItemType = "normal" | "checkbox" | "radio" | "separator";
+
     interface OnClickData {
         /**
          * Optional.
@@ -950,7 +1131,7 @@ declare namespace chrome.contextMenus {
         selectionText?: string;
         /**
          * Optional.
-          * Since Chrome 35.
+         * Since Chrome 35.
          * A flag indicating the state of a checkbox or radio item after it is clicked.
          */
         checked?: boolean;
@@ -958,10 +1139,10 @@ declare namespace chrome.contextMenus {
          * Since Chrome 35.
          * The ID of the menu item that was clicked.
          */
-        menuItemId: any;
+        menuItemId: number | string;
         /**
          * Optional.
-          * Since Chrome 35.
+         * Since Chrome 35.
          * The URL of the frame of the element where the context menu was clicked, if it was in a frame.
          */
         frameUrl?: string;
@@ -972,13 +1153,13 @@ declare namespace chrome.contextMenus {
         editable: boolean;
         /**
          * Optional.
-          * Since Chrome 35.
+         * Since Chrome 35.
          * One of 'image', 'video', or 'audio' if the context menu was activated on one of these types of elements.
          */
-        mediaType?: string;
+        mediaType?: 'image' | 'video' | 'audio';
         /**
          * Optional.
-          * Since Chrome 35.
+         * Since Chrome 35.
          * A flag indicating the state of a checkbox or radio item before it was clicked.
          */
         wasChecked?: boolean;
@@ -989,22 +1170,28 @@ declare namespace chrome.contextMenus {
         pageUrl: string;
         /**
          * Optional.
-          * Since Chrome 35.
+         * Since Chrome 35.
          * If the element is a link, the URL it points to.
          */
         linkUrl?: string;
         /**
          * Optional.
-          * Since Chrome 35.
+         * Since Chrome 35.
          * The parent ID, if any, for the item clicked.
          */
-        parentMenuItemId?: any;
+        parentMenuItemId?: number | string;
         /**
          * Optional.
-          * Since Chrome 35.
+         * Since Chrome 35.
          * Will be present for elements with a 'src' URL.
          */
         srcUrl?: string;
+        /**
+         * Optional.
+         * Since Chrome 35.
+         * The ID of the frame of the element where the context menu was clicked, if it was in a frame.
+         */
+        frameId?: number;
     }
 
     interface CreateProperties {
@@ -1015,10 +1202,10 @@ declare namespace chrome.contextMenus {
         /** Optional. The text to be displayed in the item; this is required unless type is 'separator'. When the context is 'selection', you can use %s within the string to show the selected text. For example, if this parameter's value is "Translate '%s' to Pig Latin" and the user selects the word "cool", the context menu item for the selection is "Translate 'cool' to Pig Latin".  */
         title?: string;
         /** Optional. List of contexts this menu item will appear in. Defaults to ['page'] if not specified.  */
-        contexts?: string[];
+        contexts?: ContextType[];
         /**
          * Optional.
-          * Since Chrome 20.
+         * Since Chrome 20.
          * Whether this context menu item is enabled or disabled. Defaults to true.
          */
         enabled?: boolean;
@@ -1026,7 +1213,7 @@ declare namespace chrome.contextMenus {
         targetUrlPatterns?: string[];
         /**
          * Optional.
-          * A function that will be called back when the menu item is clicked. Event pages cannot use this; instead, they should register a listener for chrome.contextMenus.onClicked.
+         * A function that will be called back when the menu item is clicked. Event pages cannot use this; instead, they should register a listener for chrome.contextMenus.onClicked.
          * @param info Information sent when a context menu item is clicked.
          * @param tab The details of the tab where the click took place. Note: this parameter only present for extensions.
          */
@@ -1034,27 +1221,13 @@ declare namespace chrome.contextMenus {
         /** Optional. The ID of a parent menu item; this makes the item a child of a previously added item.  */
         parentId?: any;
         /** Optional. The type of menu item. Defaults to 'normal' if not specified.  */
-        type?: string;
+        type?: ItemType;
         /**
          * Optional.
-          * Since Chrome 21.
+         * Since Chrome 21.
          * The unique ID to assign to this item. Mandatory for event pages. Cannot be the same as another ID for this extension.
          */
         id?: string;
-    }
-
-    interface UpdateProperties {
-        documentUrlPatterns?: string[];
-        checked?: boolean;
-        title?: string;
-        contexts?: string[];
-        /** Optional. Since Chrome 20.  */
-        enabled?: boolean;
-        targetUrlPatterns?: string[];
-        onclick?: Function;
-        /** Optional. Note: You cannot change an item to be a child of one of its own descendants.  */
-        parentId?: any;
-        type?: string;
     }
 
     interface MenuClickedEvent extends chrome.events.Event<(info: OnClickData, tab?: chrome.tabs.Tab) => void> {}
@@ -1087,16 +1260,7 @@ declare namespace chrome.contextMenus {
      * If you specify the callback parameter, it should be a function that looks like this:
      * function() {...};
      */
-    export function update(id: string, updateProperties: UpdateProperties, callback?: () => void): void;
-    /**
-     * Updates a previously created context menu item.
-     * @param id The ID of the item to update.
-     * @param updateProperties The properties to update. Accepts the same values as the create function.
-     * @param callback Called when the context menu has been updated.
-     * If you specify the callback parameter, it should be a function that looks like this:
-     * function() {...};
-     */
-    export function update(id: number, updateProperties: UpdateProperties, callback?: () => void): void;
+    export function update(id: string | number, updateProperties: CreateProperties, callback?: () => void): void;
     /**
      * Removes a context menu item.
      * @param menuItemId The ID of the context menu item to remove.
@@ -1104,15 +1268,7 @@ declare namespace chrome.contextMenus {
      * If you specify the callback parameter, it should be a function that looks like this:
      * function() {...};
      */
-    export function remove(menuItemId: string, callback?: () => void): void;
-    /**
-     * Removes a context menu item.
-     * @param menuItemId The ID of the context menu item to remove.
-     * @param callback Called when the context menu has been removed.
-     * If you specify the callback parameter, it should be a function that looks like this:
-     * function() {...};
-     */
-    export function remove(menuItemId: number, callback?: () => void): void;
+    export function remove(menuItemId: string | number, callback?: () => void): void;
 
     /**
      * Since Chrome 21.
@@ -1130,6 +1286,9 @@ declare namespace chrome.contextMenus {
  * Permissions:  "cookies", host permissions
  */
 declare namespace chrome.cookies {
+    /** A cookie's 'SameSite' state (https://tools.ietf.org/html/draft-west-first-party-cookies). 'no_restriction' corresponds to a cookie set without a 'SameSite' attribute, 'lax' to 'SameSite=Lax', and 'strict' to 'SameSite=Strict'. */
+    type SameSiteStatus = "no_restriction" | "lax" | "strict";
+
     /** Represents information about an HTTP cookie. */
     interface Cookie {
         /** The domain of the cookie (e.g. "www.google.com", "example.com"). */
@@ -1152,6 +1311,11 @@ declare namespace chrome.cookies {
         httpOnly: boolean;
         /** True if the cookie is marked as Secure (i.e. its scope is limited to secure channels, typically HTTPS). */
         secure: boolean;
+        /**
+         * Since Chrome 51.
+         * The cookie's same-site status (i.e. whether the cookie is sent with cross-site requests).
+         */
+        sameSite: SameSiteStatus;
     }
 
     /** Represents a cookie store in the browser. An incognito mode window, for instance, uses a separate cookie store from a non-incognito window. */
@@ -1161,6 +1325,9 @@ declare namespace chrome.cookies {
         /** Identifiers of all the browser tabs that share this cookie store. */
         tabIds: number[];
     }
+
+    /** The underlying reason behind the cookie's change. If a cookie was inserted, or removed via an explicit call to "chrome.cookies.remove", "cause" will be "explicit". If a cookie was automatically removed due to expiry, "cause" will be "expired". If a cookie was removed due to being overwritten with an already-expired expiration date, "cause" will be set to "expired_overwrite". If a cookie was automatically removed due to garbage collection, "cause" will be "evicted". If a cookie was automatically removed due to a "set" call that overwrote it, "cause" will be "overwrite". Plan your response accordingly. */
+    type OnChangedCause = "evicted" | "expired" | "explicit" | "expired_overwrite" | "overwrite";
 
     interface GetAllDetails {
         /** Optional. Restricts the retrieved cookies to those whose domains match or are subdomains of this one.  */
@@ -1198,12 +1365,29 @@ declare namespace chrome.cookies {
         httpOnly?: boolean;
         /** Optional. Whether the cookie should be marked as Secure. Defaults to false.  */
         secure?: boolean;
+        /**
+         * Since Chrome 51.
+         * The cookie's same-site status: defaults to 'no_restriction'.
+         */
+        sameSite?: SameSiteStatus;
     }
 
-    interface Details {
+    interface GetDetails {
+        /** The name of the cookie to retrieve. */
         name: string;
+        /** The URL with which the cookie to retrieve is associated. This argument may be a full URL, in which case any data following the URL path (e.g. the query string) is simply ignored. If host permissions for this URL are not specified in the manifest file, the API call will fail. */
         url: string;
+        /** The ID of the cookie store in which to look for the cookie. By default, the current execution context's cookie store will be used. */
         storeId?: string;
+    }
+
+    interface RemoveCallbackDetails {
+        /** The URL associated with the cookie that's been removed. */
+        url: string;
+        /** The name of the cookie that's been removed. */
+        name: string;
+        /** The ID of the cookie store from which the cookie was removed.  */
+        storeId: string;
     }
 
     interface CookieChangeInfo {
@@ -1215,7 +1399,7 @@ declare namespace chrome.cookies {
          * Since Chrome 12.
          * The underlying reason behind the cookie's change.
          */
-        cause: string;
+        cause: OnChangedCause;
     }
 
     interface CookieChangedEvent extends chrome.events.Event<(changeInfo: CookieChangeInfo) => void> {}
@@ -1242,22 +1426,23 @@ declare namespace chrome.cookies {
      * function( Cookie cookie) {...};
      * Optional parameter cookie: Contains details about the cookie that's been set. If setting failed for any reason, this will be "null", and "chrome.runtime.lastError" will be set.
      */
-    export function set(details: SetDetails, callback?: (cookie: Cookie | null) => void): void;
+    export function set(details: SetDetails, callback?: (cookie?: Cookie) => void): void;
     /**
      * Deletes a cookie by name.
      * @param details Information to identify the cookie to remove.
      * @param callback If you specify the callback parameter, it should be a function that looks like this:
      * function(object details) {...};
+     * Optional parameter details: Contains details about the cookie that's been removed. If removal failed for any reason, this will be "null", and "chrome.runtime.lastError" will be set.
      */
-    export function remove(details: Details, callback?: (details: Details) => void): void;
+    export function remove(details: GetDetails, callback?: (details?: RemoveCallbackDetails) => void): void;
     /**
      * Retrieves information about a single cookie. If more than one cookie of the same name exists for the given URL, the one with the longest path will be returned. For cookies with the same path length, the cookie with the earliest creation time will be returned.
      * @param details Details to identify the cookie being retrieved.
      * @param callback The callback parameter should be a function that looks like this:
      * function( Cookie cookie) {...};
-     * Parameter cookie: Contains details about the cookie. This parameter is null if no such cookie was found.
+     * Optional parameter cookie: Contains details about the cookie. This parameter is null if no such cookie was found.
      */
-    export function get(details: Details, callback: (cookie: Cookie | null) => void): void;
+    export function get(details: GetDetails, callback: (cookie?: Cookie) => void): void;
 
     /** Fired when a cookie is set or removed. As a special case, note that updating a cookie's properties is implemented as a two step process: the cookie to be updated is first removed entirely, generating a notification with "cause" of "overwrite" . Afterwards, a new cookie is written with the updated values, generating a second notification with "cause" "explicit". */
     var onChanged: CookieChangedEvent;
@@ -1554,6 +1739,9 @@ declare namespace chrome.declarativeWebRequest {
  * Permissions:  "desktopCapture"
  */
 declare namespace chrome.desktopCapture {
+    /** Enum used to define set of desktop media sources used in chooseDesktopMedia(). */
+    type DesktopCaptureSourceType = "screen" | "window" | "tab" | "audio";
+
     /**
      * Shows desktop media picker UI with the specified set of sources.
      * @param sources Set of sources that should be shown to the user.
@@ -1561,7 +1749,7 @@ declare namespace chrome.desktopCapture {
      * function(string streamId) {...};
      * Parameter streamId: An opaque string that can be passed to getUserMedia() API to generate media stream that corresponds to the source selected by the user. If user didn't select any source (i.e. canceled the prompt) then the callback is called with an empty streamId. The created streamId can be used only once and expires after a few seconds when it is not used.
      */
-    export function chooseDesktopMedia(sources: string[], callback: (streamId: string) => void): number;
+    export function chooseDesktopMedia(sources: DesktopCaptureSourceType[], callback: (streamId: string) => void): number;
     /**
      * Shows desktop media picker UI with the specified set of sources.
      * @param sources Set of sources that should be shown to the user.
@@ -1570,7 +1758,7 @@ declare namespace chrome.desktopCapture {
      * function(string streamId) {...};
      * Parameter streamId: An opaque string that can be passed to getUserMedia() API to generate media stream that corresponds to the source selected by the user. If user didn't select any source (i.e. canceled the prompt) then the callback is called with an empty streamId. The created streamId can be used only once and expires after a few seconds when it is not used.
      */
-    export function chooseDesktopMedia(sources: string[], targetTab: chrome.tabs.Tab, callback: (streamId: string) => void): number;
+    export function chooseDesktopMedia(sources: DesktopCaptureSourceType[], targetTab: chrome.tabs.Tab, callback: (streamId: string) => void): number;
     /**
      * Hides desktop media picker dialog shown by chooseDesktopMedia().
      * @param desktopMediaRequestId Id returned by chooseDesktopMedia()
@@ -1925,7 +2113,7 @@ declare namespace chrome.documentScan {
 }
 
 ////////////////////
-// Dev Tools - Downloads
+// Downloads
 ////////////////////
 /**
  * Use the chrome.downloads API to programmatically initiate, monitor, manipulate, and search for downloads.
@@ -1933,6 +2121,34 @@ declare namespace chrome.documentScan {
  * Permissions:  "downloads"
  */
 declare namespace chrome.downloads {
+    /**
+     * uniquify: To avoid duplication, the filename is changed to include a counter before the filename extension.
+     * overwrite: The existing file will be overwritten with the new file.
+     * prompt: The user will be prompted with a file chooser dialog.
+     */
+    type FilenameConflictAction = "uniquify" | "overwrite" | "prompt";
+
+    type InterruptReason = "FILE_FAILED" | "FILE_ACCESS_DENIED" | "FILE_NO_SPACE" | "FILE_NAME_TOO_LONG" | "FILE_TOO_LARGE" | "FILE_VIRUS_INFECTED" | "FILE_TRANSIENT_ERROR" | "FILE_BLOCKED" | "FILE_SECURITY_CHECK_FAILED" | "FILE_TOO_SHORT" | "FILE_HASH_MISMATCH" | "NETWORK_FAILED" | "NETWORK_TIMEOUT" | "NETWORK_DISCONNECTED" | "NETWORK_SERVER_DOWN" | "NETWORK_INVALID_REQUEST" | "SERVER_FAILED" | "SERVER_NO_RANGE" | "SERVER_BAD_CONTENT" | "SERVER_UNAUTHORIZED" | "SERVER_CERT_PROBLEM" | "SERVER_FORBIDDEN" | "SERVER_UNREACHABLE" | "USER_CANCELED" | "USER_SHUTDOWN" | "CRASH";
+
+    /**
+     * file: The download's filename is suspicious.
+     * url: The download's URL is known to be malicious.
+     * content: The downloaded file is known to be malicious.
+     * uncommon: The download's URL is not commonly downloaded and could be dangerous.
+     * host: The download came from a host known to distribute malicious binaries and is likely dangerous.
+     * unwanted: The download is potentially unwanted or unsafe. E.g. it could make changes to browser or computer settings.
+     * safe: The download presents no known danger to the user's computer.
+     * accepted: The user has accepted the dangerous download.
+     */
+    type DangerType = "file" | "url" | "content" | "uncommon" | "host" | "unwanted" | "safe" | "accepted";
+
+    /**
+     * in_progress: The download is currently receiving data from the server.
+     * interrupted: An error broke the connection with the file host.
+     * complete: The download completed successfully.
+     */
+    type State = "in_progress" | "interrupted" | "complete";
+
     interface HeaderNameValuePair {
         /** Name of the HTTP header. */
         name: string;
@@ -1952,9 +2168,9 @@ declare namespace chrome.downloads {
         /** Optional. Extra HTTP headers to send with the request if the URL uses the HTTP[s] protocol. Each header is represented as a dictionary containing the keys name and either value or binaryValue, restricted to those allowed by XMLHttpRequest.  */
         headers?: HeaderNameValuePair[];
         /** Optional. The HTTP method to use if the URL uses the HTTP[S] protocol.  */
-        method?: string;
+        method?: "GET" | "POST";
         /** Optional. The action to take if filename already exists.  */
-        conflictAction?: string;
+        conflictAction?: FilenameConflictAction;
     }
 
     interface DownloadDelta {
@@ -2008,7 +2224,7 @@ declare namespace chrome.downloads {
         /** Number of bytes received so far from the host, without considering file compression. */
         bytesReceived: number;
         /** Indication of whether this download is thought to be safe or known to be suspicious. */
-        danger: string;
+        danger: DangerType;
         /** Absolute URL. */
         url: string;
         /** Number of bytes in the whole file, without considering file compression, or -1 if unknown. */
@@ -2018,7 +2234,7 @@ declare namespace chrome.downloads {
         /** True if the download has stopped reading data from the host, but kept the connection open. */
         paused: boolean;
         /** Indicates whether the download is progressing, interrupted, or complete. */
-        state: string;
+        state: State;
         /** The file's MIME type. */
         mime: string;
         /** Number of bytes in the whole file post-decompression, or -1 if unknown. */
@@ -2026,7 +2242,7 @@ declare namespace chrome.downloads {
         /** The time when the download began in ISO 8601 format. May be passed directly to the Date constructor: chrome.downloads.search({}, function(items){items.forEach(function(item){console.log(new Date(item.startTime))})}) */
         startTime: string;
         /** Optional. Why the download was interrupted. Several kinds of HTTP errors may be grouped under one of the errors beginning with SERVER_. Errors relating to the network begin with NETWORK_, errors relating to the process of writing the file to the file system begin with FILE_, and interruptions initiated by the user begin with USER_.  */
-        error?: string;
+        error?: InterruptReason;
         /** Optional. The time when the download ended in ISO 8601 format. May be passed directly to the Date constructor: chrome.downloads.search({}, function(items){items.forEach(function(item){if (item.endTime) console.log(new Date(item.endTime))})})  */
         endTime?: string;
         /** An identifier that is persistent across browser sessions. */
@@ -2048,8 +2264,7 @@ declare namespace chrome.downloads {
     }
 
     interface GetFileIconOptions {
-        /** Optional. * The size of the returned icon. The icon will be square with dimensions size * size pixels. The default and largest size for the icon is 32x32 pixels. The only supported sizes are 16 and 32. It is an error to specify any other size.
- */
+        /** Optional. The size of the returned icon. The icon will be square with dimensions size * size pixels. The default and largest size for the icon is 32x32 pixels. The only supported sizes are 16 and 32. It is an error to specify any other size. */
         size?: number;
     }
 
@@ -2063,7 +2278,7 @@ declare namespace chrome.downloads {
         /** Optional. Limits results to DownloadItem whose totalBytes is greater than the given integer.  */
         totalBytesGreater?: number;
         /** Optional. Indication of whether this download is thought to be safe or known to be suspicious.  */
-        danger?: string;
+        danger?: DangerType;
         /** Optional. Number of bytes in the whole file, without considering file compression, or -1 if unknown.  */
         totalBytes?: number;
         /** Optional. True if the download has stopped reading data from the host, but kept the connection open.  */
@@ -2083,7 +2298,7 @@ declare namespace chrome.downloads {
         /** Optional. Absolute local path.  */
         filename?: string;
         /** Optional. Indicates whether the download is progressing, interrupted, or complete.  */
-        state?: string;
+        state?: State;
         /** Optional. Limits results to DownloadItem that started after the given ms since the epoch.  */
         startedAfter?: number;
         /** Optional. The file's MIME type.  */
@@ -2099,7 +2314,7 @@ declare namespace chrome.downloads {
         /** Optional. The maximum number of matching DownloadItem returned. Defaults to 1000. Set to 0 in order to return all matching DownloadItem. See search for how to page through results.  */
         limit?: number;
         /** Optional. Why a download was interrupted.  */
-        error?: number;
+        error?: InterruptReason;
         /** Optional. The time when the download ended in ISO 8601 format.  */
         endTime?: number;
         /** Optional. Whether the downloaded file exists;  */
@@ -2110,7 +2325,7 @@ declare namespace chrome.downloads {
         /** The DownloadItem's new target DownloadItem.filename, as a path relative to the user's default Downloads directory, possibly containing subdirectories. Absolute paths, empty paths, and paths containing back-references ".." will be ignored. */
         filename: string;
         /** Optional. The action to take if filename already exists.  */
-        conflictAction?: string;
+        conflictAction?: FilenameConflictAction;
     }
 
     interface DownloadChangedEvent extends chrome.events.Event<(downloadDelta: DownloadDelta) => void> {}
