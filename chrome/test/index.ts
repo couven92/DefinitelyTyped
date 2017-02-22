@@ -151,14 +151,14 @@ function printPage() {
 }
 
 // https://developer.chrome.com/extensions/examples/extensions/catblock/background.js
-function catBlock () {
+function catBlock() {
     var loldogs: string[];
     chrome.webRequest.onBeforeRequest.addListener(
-        function(info) {
+        function (info) {
             console.log("Cat intercepted: " + info.url);
             // Redirect the lolcal request to a random loldog URL.
             var i = Math.round(Math.random() * loldogs.length);
-            return {redirectUrl: loldogs[i]};
+            return { redirectUrl: loldogs[i] };
         },
         // filters
         {
@@ -183,7 +183,7 @@ function beforeRedditNavigation() {
         let url = new URL(requestDetails.url);
         let splitUrl = url.hostname.split('.');
         //` Note: Does not cover the XX.co.uk type edge case
-        let host = (splitUrl[(splitUrl.length -1) - 1]);
+        let host = (splitUrl[(splitUrl.length - 1) - 1]);
 
         if (host === null) {
             return;
@@ -191,7 +191,7 @@ function beforeRedditNavigation() {
             alert("Were you trying to go on reddit, during working hours? :(")
             return;
         }
-    },{urls: ["http://*/*"], types: ["image"]});
+    }, { urls: ["http://*/*"], types: ["image"] });
 }
 
 // contrived settings example
@@ -209,7 +209,7 @@ function proxySettings() {
     chrome.proxy.settings.set({
         value: 'something',
         scope: 'regular'
-    }, () => {});
+    }, () => { });
 
     chrome.proxy.settings.clear({});
 
@@ -219,62 +219,62 @@ function proxySettings() {
 
 // https://developer.chrome.com/extensions/examples/api/contentSettings/popup.js
 function contentSettings() {
-  var incognito;
-  var url;
+    var incognito;
+    var url;
 
-  function settingChanged() {
-    var type = this.id;
-    var setting = this.value;
-    var pattern = /^file:/.test(url) ? url : url.replace(/\/[^\/]*?$/, '/*');
-    console.log(type+' setting for '+pattern+': '+setting);
-    // HACK: [type] is not recognised by the docserver's sample crawler, so
-    // mention an explicit
-    // type: chrome.contentSettings.cookies.set - See http://crbug.com/299634
-    chrome.contentSettings[type].set({
-          'primaryPattern': pattern,
-          'setting': setting,
-          'scope': (incognito ? 'incognito_session_only' : 'regular')
-        });
-  }
-
-  document.addEventListener('DOMContentLoaded', function () {
-    chrome.tabs.query({active: true, currentWindow: true, url: ['http://*/*', 'https://*/*'] }, function(tabs) {
-      var current = tabs[0];
-      incognito = current.incognito;
-      url = current.url;
-      var types = ['cookies', 'images', 'javascript', 'location', 'plugins',
-                   'popups', 'notifications', 'fullscreen', 'mouselock',
-                   'microphone', 'camera', 'unsandboxedPlugins',
-                   'automaticDownloads'];
-      types.forEach(function(type) {
+    function settingChanged() {
+        var type = this.id;
+        var setting = this.value;
+        var pattern = /^file:/.test(url) ? url : url.replace(/\/[^\/]*?$/, '/*');
+        console.log(type + ' setting for ' + pattern + ': ' + setting);
         // HACK: [type] is not recognised by the docserver's sample crawler, so
         // mention an explicit
-        // type: chrome.contentSettings.cookies.get - See http://crbug.com/299634
-        chrome.contentSettings[type] && chrome.contentSettings[type].get({
-              'primaryUrl': url,
-              'incognito': incognito
-            },
-            function(details) {
-              var input = <HTMLInputElement>document.getElementById(type);
-              input.disabled = false;
-              input.value = details.setting;
-            });
-      });
-    });
-
-    var selects = document.querySelectorAll('select');
-    for (var i = 0; i < selects.length; i++) {
-      selects[i].addEventListener('change', settingChanged);
+        // type: chrome.contentSettings.cookies.set - See http://crbug.com/299634
+        chrome.contentSettings[type].set({
+            'primaryPattern': pattern,
+            'setting': setting,
+            'scope': (incognito ? 'incognito_session_only' : 'regular')
+        });
     }
-  });
+
+    document.addEventListener('DOMContentLoaded', function () {
+        chrome.tabs.query({ active: true, currentWindow: true, url: ['http://*/*', 'https://*/*'] }, function (tabs) {
+            var current = tabs[0];
+            incognito = current.incognito;
+            url = current.url;
+            var types = ['cookies', 'images', 'javascript', 'location', 'plugins',
+                'popups', 'notifications', 'fullscreen', 'mouselock',
+                'microphone', 'camera', 'unsandboxedPlugins',
+                'automaticDownloads'];
+            types.forEach(function (type) {
+                // HACK: [type] is not recognised by the docserver's sample crawler, so
+                // mention an explicit
+                // type: chrome.contentSettings.cookies.get - See http://crbug.com/299634
+                chrome.contentSettings[type] && chrome.contentSettings[type].get({
+                    'primaryUrl': url,
+                    'incognito': incognito
+                },
+                    function (details) {
+                        var input = <HTMLInputElement>document.getElementById(type);
+                        input.disabled = false;
+                        input.value = details.setting;
+                    });
+            });
+        });
+
+        var selects = document.querySelectorAll('select');
+        for (var i = 0; i < selects.length; i++) {
+            selects[i].addEventListener('change', settingChanged);
+        }
+    });
 }
 
 // https://developer.chrome.com/extensions/runtime#method-openOptionsPage
 function testOptionsPage() {
-  chrome.runtime.openOptionsPage();
-  chrome.runtime.openOptionsPage(function() {
-    // Do a thing ...
-  });
+    chrome.runtime.openOptionsPage();
+    chrome.runtime.openOptionsPage(function () {
+        // Do a thing ...
+    });
 }
 
 // https://developer.chrome.com/extensions/storage#type-StorageArea
@@ -302,8 +302,8 @@ function testStorage() {
         console.log("done");
     }
 
-    chrome.storage.sync.set({ foo: 1, bar: 2});
-    chrome.storage.sync.set({ foo: 1, bar: 2}, doneCallback);
+    chrome.storage.sync.set({ foo: 1, bar: 2 });
+    chrome.storage.sync.set({ foo: 1, bar: 2 }, doneCallback);
 
     chrome.storage.sync.remove("myKey");
     chrome.storage.sync.remove("myKey", doneCallback);
@@ -365,9 +365,9 @@ function test_chrome_accessibilityFeatures() {
         setting.set({ value: 42, scope: "incognito_session_only" }, function () { });
 
         setting.clear({});
-        setting.clear({ scope: "regular"});
-        setting.clear({ scope: "regular_only"});
-        setting.clear({ scope: "incognito_persistent"});
+        setting.clear({ scope: "regular" });
+        setting.clear({ scope: "regular_only" });
+        setting.clear({ scope: "incognito_persistent" });
         setting.clear({ scope: "incognito_session_only" });
         setting.clear({}, function () { });
         setting.clear({ scope: "regular" }, function () { });
@@ -389,4 +389,39 @@ function test_chrome_accessibilityFeatures() {
     test_accessibilityFeatures_setting(chrome.accessibilityFeatures.selectToSpeak);
     test_accessibilityFeatures_setting(chrome.accessibilityFeatures.switchAccess);
     test_accessibilityFeatures_setting(chrome.accessibilityFeatures.animationPolicy);
+}
+
+function test_chrome_alarms() {
+    const testAlarmName = "testAlarm";
+
+    var alarm_detail_callback = function (alarm: chrome.alarms.Alarm) {
+        var name = alarm.name;
+        if ("periodInMinutes" in alarm) {
+            var periodInMinutes = alarm.periodInMinutes;
+        }
+        var scheduledTime = alarm.scheduledTime;
+    };
+    var alarm_cleared_callback = function (was_cleared: boolean) { };
+
+    chrome.alarms.onAlarm.addListener(alarm_detail_callback);
+
+    chrome.alarms.create(testAlarmName);
+    chrome.alarms.create(testAlarmName, { when: Date.now() + 42 });
+    chrome.alarms.create(testAlarmName, { when: Date.now() + 42, periodInMinutes: 42.42 });
+    chrome.alarms.create(testAlarmName, { delayInMinutes: 42.42 });
+    chrome.alarms.create(testAlarmName, { delayInMinutes: 42.42, periodInMinutes: 42.42 });
+
+    chrome.alarms.get(alarm_detail_callback);
+    chrome.alarms.get(testAlarmName, alarm_detail_callback);
+
+    chrome.alarms.getAll(function (alarms) { alarms.forEach(alarm_detail_callback); });
+
+    chrome.alarms.clear();
+    chrome.alarms.clear(alarm_cleared_callback);
+
+    chrome.alarms.clear(testAlarmName);
+    chrome.alarms.clear(testAlarmName, alarm_cleared_callback);
+
+    chrome.alarms.clearAll();
+    chrome.alarms.clearAll(alarm_cleared_callback);
 }
