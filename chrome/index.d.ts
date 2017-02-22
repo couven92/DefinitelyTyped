@@ -231,13 +231,13 @@ declare namespace chrome.alarms {
      * @param callback If you specify the callback parameter, it should be a function that looks like this:
      * function(boolean wasCleared) {...};
      */
-    export function clear(name?: string, callback?: (wasCleared: boolean) => void): void;
+    export function clear(name: string, callback?: (wasCleared: boolean) => void): void;
     /**
      * Clears the alarm without a name.
      * @param callback If you specify the callback parameter, it should be a function that looks like this:
      * function(boolean wasCleared) {...};
      */
-    export function clear(callback: (wasCleared: boolean) => void): void;
+    export function clear(callback?: (wasCleared: boolean) => void): void;
     /**
      * Retrieves details about the specified alarm.
      * @param callback The callback parameter should be a function that looks like this:
@@ -294,6 +294,9 @@ declare namespace chrome.browser {
  * Permissions:  "bookmarks"
  */
 declare namespace chrome.bookmarks {
+    /** Indicates the reason why this node is unmodifiable. The managed value indicates that this node was configured by the system administrator or by the custodian of a supervised user. Omitted if the node can be modified by the user and the extension (default). */
+    type BookmarkTreeNodeUnmodifiable = "managed";
+
     /** A node (either a bookmark or a folder) in the bookmark tree. Child nodes are ordered within their parent folder. */
     interface BookmarkTreeNode {
         /** Optional. The 0-based position of this node within its parent folder.  */
@@ -314,15 +317,17 @@ declare namespace chrome.bookmarks {
         children?: BookmarkTreeNode[];
         /**
          * Optional.
-          * Since Chrome 37.
+         * Since Chrome 37.
          * Indicates the reason why this node is unmodifiable. The managed value indicates that this node was configured by the system administrator or by the custodian of a supervised user. Omitted if the node can be modified by the user and the extension (default).
          */
-        unmodifiable?: any;
+        unmodifiable?: BookmarkTreeNodeUnmodifiable;
     }
 
     interface BookmarkRemoveInfo {
         index: number;
         parentId: string;
+        /** @since Since Chrome 48. */
+        node: BookmarkTreeNode;
     }
 
     interface BookmarkMoveInfo {

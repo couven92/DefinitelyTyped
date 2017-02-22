@@ -394,14 +394,14 @@ function test_chrome_accessibilityFeatures() {
 function test_chrome_alarms() {
     const testAlarmName = "testAlarm";
 
-    var alarm_detail_callback = function (alarm: chrome.alarms.Alarm) {
+    function alarm_detail_callback(alarm: chrome.alarms.Alarm) {
         var name = alarm.name;
         if ("periodInMinutes" in alarm) {
             var periodInMinutes = alarm.periodInMinutes;
         }
         var scheduledTime = alarm.scheduledTime;
     };
-    var alarm_cleared_callback = function (was_cleared: boolean) { };
+    function alarm_cleared_callback(was_cleared: boolean) { };
 
     chrome.alarms.onAlarm.addListener(alarm_detail_callback);
 
@@ -424,4 +424,151 @@ function test_chrome_alarms() {
 
     chrome.alarms.clearAll();
     chrome.alarms.clearAll(alarm_cleared_callback);
+}
+
+function test_chrome_bookmarks() {
+    function bookmark_tree_node_callback(bookmark: chrome.bookmarks.BookmarkTreeNode) {
+        var id = bookmark.id;
+        if ("parentId" in bookmark) {
+            var parentId = bookmark.parentId;
+        }
+        if ("indedx" in bookmark) {
+            var index = bookmark.index;
+        }
+        if ("url" in bookmark) {
+            var url = bookmark.url;
+        }
+        var title = bookmark.title;
+        if ("dateAdded" in bookmark && bookmark.dateAdded) {
+            var dateAdded = new Date(bookmark.dateAdded);
+        }
+        if ("dateGroupModified" in bookmark) {
+            var dateGroupModified = bookmark.dateGroupModified;
+        }
+        if ("unmodifiable" in bookmark) {
+            var unmodifiable = bookmark.unmodifiable;
+            if (unmodifiable === "managed") {
+                var unmodifiable_is_managed = true;
+            }
+        }
+        if (typeof bookmark.children !== "undefined" && bookmark.children) {
+            bookmark.children.forEach(bookmark_tree_node_callback);
+        }
+    }
+
+    function bookmark_tree_node_array_callback(bookmarks: chrome.bookmarks.BookmarkTreeNode[]) {
+        bookmarks.forEach(bookmark_tree_node_callback);
+    }
+
+    chrome.bookmarks.get("testBookmark", bookmark_tree_node_array_callback);
+    chrome.bookmarks.get(["testBookmark1", "testBookmark2"], bookmark_tree_node_array_callback);
+
+    chrome.bookmarks.getChildren("testBookmark", bookmark_tree_node_array_callback);
+
+    chrome.bookmarks.getRecent(42, bookmark_tree_node_array_callback);
+
+    chrome.bookmarks.getTree(bookmark_tree_node_array_callback);
+
+    chrome.bookmarks.getSubTree("testBookmark", bookmark_tree_node_array_callback);
+
+    chrome.bookmarks.search("Test", bookmark_tree_node_array_callback);
+    chrome.bookmarks.search("Test Title", bookmark_tree_node_array_callback);
+    chrome.bookmarks.search("http://www.example.com/test_url", bookmark_tree_node_array_callback);
+
+    chrome.bookmarks.search({ query: "Test" }, bookmark_tree_node_array_callback);
+    chrome.bookmarks.search({ query: "Test", title: "Test Title" }, bookmark_tree_node_array_callback);
+    chrome.bookmarks.search({ query: "Test", url: "http://www.example.com/test_url" }, bookmark_tree_node_array_callback);
+    chrome.bookmarks.search({ query: "Test", title: "Test Title", url: "http://www.example.com/test_url" }, bookmark_tree_node_array_callback);
+    chrome.bookmarks.search({ title: "Test Title" }, bookmark_tree_node_array_callback);
+    chrome.bookmarks.search({ title: "Test Title", url: "http://www.example.com/test_url" }, bookmark_tree_node_array_callback);
+    chrome.bookmarks.search({ url: "http://www.example.com/test_url" }, bookmark_tree_node_array_callback);
+
+    chrome.bookmarks.create({ parentId: "testBookmarkParent" });
+    chrome.bookmarks.create({ parentId: "testBookmarkParent", index: 42 });
+    chrome.bookmarks.create({ parentId: "testBookmarkParent", index: 42, title: "Test Title" });
+    chrome.bookmarks.create({ parentId: "testBookmarkParent", index: 42, title: "Test Title", url: "http://www.example.com/test_url" });
+    chrome.bookmarks.create({ parentId: "testBookmarkParent", index: 42, url: "http://www.example.com/test_url" });
+    chrome.bookmarks.create({ parentId: "testBookmarkParent", title: "Test Title" });
+    chrome.bookmarks.create({ parentId: "testBookmarkParent", title: "Test Title", url: "http://www.example.com/test_url" });
+    chrome.bookmarks.create({ parentId: "testBookmarkParent", url: "http://www.example.com/test_url" });
+    chrome.bookmarks.create({ index: 42 });
+    chrome.bookmarks.create({ index: 42, title: "Test Title" });
+    chrome.bookmarks.create({ index: 42, title: "Test Title", url: "http://www.example.com/test_url" });
+    chrome.bookmarks.create({ index: 42, url: "http://www.example.com/test_url" });
+    chrome.bookmarks.create({ title: "Test Title" });
+    chrome.bookmarks.create({ title: "Test Title", url: "http://www.example.com/test_url" });
+    chrome.bookmarks.create({ url: "http://www.example.com/test_url" });
+    chrome.bookmarks.create({ parentId: "testBookmarkParent" }, bookmark_tree_node_callback);
+    chrome.bookmarks.create({ parentId: "testBookmarkParent", index: 42 }, bookmark_tree_node_callback);
+    chrome.bookmarks.create({ parentId: "testBookmarkParent", index: 42, title: "Test Title" }, bookmark_tree_node_callback);
+    chrome.bookmarks.create({ parentId: "testBookmarkParent", index: 42, title: "Test Title", url: "http://www.example.com/test_url" }, bookmark_tree_node_callback);
+    chrome.bookmarks.create({ parentId: "testBookmarkParent", index: 42, url: "http://www.example.com/test_url" }, bookmark_tree_node_callback);
+    chrome.bookmarks.create({ parentId: "testBookmarkParent", title: "Test Title" }, bookmark_tree_node_callback);
+    chrome.bookmarks.create({ parentId: "testBookmarkParent", title: "Test Title", url: "http://www.example.com/test_url" }, bookmark_tree_node_callback);
+    chrome.bookmarks.create({ parentId: "testBookmarkParent", url: "http://www.example.com/test_url" }, bookmark_tree_node_callback);
+    chrome.bookmarks.create({ index: 42 }, bookmark_tree_node_callback);
+    chrome.bookmarks.create({ index: 42, title: "Test Title" }, bookmark_tree_node_callback);
+    chrome.bookmarks.create({ index: 42, title: "Test Title", url: "http://www.example.com/test_url" }, bookmark_tree_node_callback);
+    chrome.bookmarks.create({ index: 42, url: "http://www.example.com/test_url" }, bookmark_tree_node_callback);
+    chrome.bookmarks.create({ title: "Test Title" }, bookmark_tree_node_callback);
+    chrome.bookmarks.create({ title: "Test Title", url: "http://www.example.com/test_url" }, bookmark_tree_node_callback);
+    chrome.bookmarks.create({ url: "http://www.example.com/test_url" }, bookmark_tree_node_callback);
+
+    chrome.bookmarks.move("testBookmark", { parentId: "testBookmarkDestination" });
+    chrome.bookmarks.move("testBookmark", { index: 42 });
+    chrome.bookmarks.move("testBookmark", { parentId: "testBookmarkDestination" }, bookmark_tree_node_callback);
+    chrome.bookmarks.move("testBookmark", { index: 42 }, bookmark_tree_node_callback);
+
+    chrome.bookmarks.update("testBookmark", { title: "Test Title" });
+    chrome.bookmarks.update("testBookmark", { title: "Test Title", url: "http://www.example.com/test_url" });
+    chrome.bookmarks.update("testBookmark", { url: "http://www.example.com/test_url" });
+    chrome.bookmarks.update("testBookmark", { title: "Test Title" }, bookmark_tree_node_callback);
+    chrome.bookmarks.update("testBookmark", { title: "Test Title", url: "http://www.example.com/test_url" }, bookmark_tree_node_callback);
+    chrome.bookmarks.update("testBookmark", { url: "http://www.example.com/test_url" }, bookmark_tree_node_callback);
+
+    chrome.bookmarks.remove("testBookmark");
+    chrome.bookmarks.remove("testBookmark", function () { });
+
+    chrome.bookmarks.removeTree("testBookmark");
+    chrome.bookmarks.removeTree("testBookmark", function () { });
+
+    function bookmark_id_and_tree_node_callback(id: string, bookmark: chrome.bookmarks.BookmarkTreeNode) {
+        bookmark_tree_node_callback(bookmark);
+    }
+
+    chrome.bookmarks.onCreated.addListener(bookmark_id_and_tree_node_callback);
+
+    function bookmark_id_and_remove_info_callback(id: string, removeInfo: chrome.bookmarks.BookmarkRemoveInfo) {
+        var parentId = removeInfo.parentId;
+        var index = removeInfo.index;
+        var node = removeInfo.node;
+        bookmark_tree_node_callback(node);
+    }
+
+    chrome.bookmarks.onRemoved.addListener(bookmark_id_and_remove_info_callback);
+
+    function bookmark_id_and_change_info_callback(id: string, changeInfo: chrome.bookmarks.BookmarkChangeInfo) {
+        var title = changeInfo.title;
+        if ("url" in changeInfo) {
+            var url = changeInfo.url;
+        }
+    }
+
+    chrome.bookmarks.onChanged.addListener(bookmark_id_and_change_info_callback);
+
+    function bookmark_id_and_move_info_callback(id: string, moveInfo: chrome.bookmarks.BookmarkMoveInfo) {
+        var parentId = moveInfo.parentId;
+        var index = moveInfo.index;
+        var oldParentId = moveInfo.oldParentId;
+        var oldIndex = moveInfo.oldIndex;
+    }
+
+    chrome.bookmarks.onMoved.addListener(bookmark_id_and_move_info_callback);
+
+    function bookmark_id_and_reorder_info_callback(id: string, reorderInfo: chrome.bookmarks.BookmarkReorderInfo) {
+        var childIds = reorderInfo.childIds;
+    }
+
+    chrome.bookmarks.onImportBegan.addListener(function () { });
+    chrome.bookmarks.onImportEnded.addListener(function () { });
 }
