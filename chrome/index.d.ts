@@ -669,8 +669,8 @@ declare namespace chrome.browsingData {
         history?: boolean;
         /**
          * Optional.
-         * Since Chrome 39.
          * Service Workers.
+         * @since Since Chrome 39.
          */
         serviceWorkers?: boolean;
     }
@@ -684,8 +684,8 @@ declare namespace chrome.browsingData {
     }
 
     /**
-     * Since Chrome 26.
      * Reports which types of data are currently selected in the 'Clear browsing data' settings UI. Note: some of the data types included in this API are not available in the settings UI, and some UI settings control more than one data type listed here.
+     * @since Since Chrome 26.
      * @param callback The callback parameter should be a function that looks like this:
      * function(object result) {...};
      */

@@ -636,3 +636,98 @@ function test_chrome_browserAction() {
 
     chrome.browserAction.onClicked.addListener(function (tab) { /* Test to test tabs.Tab instances in test_chrome_tabs */ });
 }
+
+function test_chrome_browsingData() {
+    function browsingData_RemovalOptions_callback(options: chrome.browsingData.RemovalOptions) {
+        var since = options.since || 0;
+        if ("originTypes" in options && options.originTypes) {
+            var unprotectedWeb = options.originTypes.unprotectedWeb || false;
+            var protectedWeb = options.originTypes.protectedWeb || false;
+            var extension = options.originTypes.extension || false;
+        }
+    }
+
+    function browsingData_DataTypeSet_callback(typeSet: chrome.browsingData.DataTypeSet) {
+        var appcache = typeSet.appcache || false;
+        var cache = typeSet.cache || false;
+        var cookies = typeSet.cookies || false;
+        var downloads = typeSet.downloads || false;
+        var fileSystems = typeSet.fileSystems || false;
+        var formData = typeSet.formData || false;
+        var history = typeSet.history || false;
+        var indexedDb = typeSet.indexedDB || false;
+        var localStorage = typeSet.localStorage || false;
+        var serverBoundCertificates = typeSet.serverBoundCertificates || false;
+        var passwords = typeSet.passwords || false;
+        var pluginData = typeSet.pluginData || false;
+        var serviceWorkers = typeSet.serviceWorkers || false;
+        var webSQL = typeSet.webSQL || false;
+    }
+
+    function browsingData_settings_callback(setting: chrome.browsingData.SettingsCallback) {
+        var options = setting.options;
+        var dataToRemove = setting.dataToRemove;
+        var dataRemovalPermitted = setting.dataRemovalPermitted;
+
+        browsingData_RemovalOptions_callback(options);
+        browsingData_DataTypeSet_callback(dataToRemove);
+        browsingData_DataTypeSet_callback(dataRemovalPermitted);
+    }
+
+    chrome.browsingData.settings(browsingData_settings_callback);
+
+    chrome.browsingData.remove({}, {});
+    chrome.browsingData.remove({ since: Date.now() - 42 }, {});
+    chrome.browsingData.remove({ since: Date.now() - 42, originTypes: {} }, {});
+    chrome.browsingData.remove({ since: Date.now() - 42, originTypes: { unprotectedWeb: true } }, {});
+    chrome.browsingData.remove({ since: Date.now() - 42, originTypes: { unprotectedWeb: true, protectedWeb: true } }, {});
+    chrome.browsingData.remove({ since: Date.now() - 42, originTypes: { unprotectedWeb: true, extension: true } }, {});
+    chrome.browsingData.remove({ since: Date.now() - 42, originTypes: { unprotectedWeb: true, protectedWeb: true, extension: true } }, {});
+    chrome.browsingData.remove({ since: Date.now() - 42, originTypes: { protectedWeb: true } }, {});
+    chrome.browsingData.remove({ since: Date.now() - 42, originTypes: { protectedWeb: true, extension: true } }, {});
+    chrome.browsingData.remove({ since: Date.now() - 42, originTypes: { extension: true } }, {});
+    chrome.browsingData.remove({ originTypes: {} }, {});
+    chrome.browsingData.remove({ originTypes: { unprotectedWeb: true } }, {});
+    chrome.browsingData.remove({ originTypes: { unprotectedWeb: true, protectedWeb: true } }, {});
+    chrome.browsingData.remove({ originTypes: { unprotectedWeb: true, extension: true } }, {});
+    chrome.browsingData.remove({ originTypes: { unprotectedWeb: true, protectedWeb: true, extension: true } }, {});
+    chrome.browsingData.remove({ originTypes: { protectedWeb: true } }, {});
+    chrome.browsingData.remove({ originTypes: { protectedWeb: true, extension: true } }, {});
+    chrome.browsingData.remove({ originTypes: { extension: true } }, {});
+    chrome.browsingData.remove({}, {}, function () { });
+    chrome.browsingData.remove({ since: Date.now() - 42 }, {}, function () { });
+    chrome.browsingData.remove({ since: Date.now() - 42, originTypes: {} }, {}, function () { });
+    chrome.browsingData.remove({ since: Date.now() - 42, originTypes: { unprotectedWeb: true } }, {}, function () { });
+    chrome.browsingData.remove({ since: Date.now() - 42, originTypes: { unprotectedWeb: true, protectedWeb: true } }, {}, function () { });
+    chrome.browsingData.remove({ since: Date.now() - 42, originTypes: { unprotectedWeb: true, extension: true } }, {}, function () { });
+    chrome.browsingData.remove({ since: Date.now() - 42, originTypes: { unprotectedWeb: true, protectedWeb: true, extension: true } }, {}, function () { });
+    chrome.browsingData.remove({ since: Date.now() - 42, originTypes: { protectedWeb: true } }, {}, function () { });
+    chrome.browsingData.remove({ since: Date.now() - 42, originTypes: { protectedWeb: true, extension: true } }, {}, function () { });
+    chrome.browsingData.remove({ since: Date.now() - 42, originTypes: { extension: true } }, {}, function () { });
+    chrome.browsingData.remove({ originTypes: {} }, {}, function () { });
+    chrome.browsingData.remove({ originTypes: { unprotectedWeb: true } }, {}, function () { });
+    chrome.browsingData.remove({ originTypes: { unprotectedWeb: true, protectedWeb: true } }, {}, function () { });
+    chrome.browsingData.remove({ originTypes: { unprotectedWeb: true, extension: true } }, {}, function () { });
+    chrome.browsingData.remove({ originTypes: { unprotectedWeb: true, protectedWeb: true, extension: true } }, {}, function () { });
+    chrome.browsingData.remove({ originTypes: { protectedWeb: true } }, {}, function () { });
+    chrome.browsingData.remove({ originTypes: { protectedWeb: true, extension: true } }, {}, function () { });
+    chrome.browsingData.remove({ originTypes: { extension: true } }, {}, function () { });
+    // For members in the object specified as the parameter dataToRemove (2. Parameter), all possible permutations are also possible.
+    // Likewise, the possible permutations as listed above can also be applied on the options (1.) parameter
+    // As shown above, the callback (3.) parameter is always optional and may be omitted.
+    chrome.browsingData.remove({}, { appcache: true });
+    chrome.browsingData.remove({}, { cache: true });
+    chrome.browsingData.remove({}, { cookies: true });
+    chrome.browsingData.remove({}, { downloads: true });
+    chrome.browsingData.remove({}, { fileSystems: true });
+    chrome.browsingData.remove({}, { formData: true });
+    chrome.browsingData.remove({}, { history: true });
+    chrome.browsingData.remove({}, { indexedDB: true });
+    chrome.browsingData.remove({}, { localStorage: true });
+    chrome.browsingData.remove({}, { passwords: true });
+    chrome.browsingData.remove({}, { pluginData: true });
+    chrome.browsingData.remove({}, { serverBoundCertificates: true });
+    chrome.browsingData.remove({}, { serviceWorkers: true });
+    chrome.browsingData.remove({}, { webSQL: true });
+
+}
