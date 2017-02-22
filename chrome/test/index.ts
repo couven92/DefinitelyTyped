@@ -318,3 +318,75 @@ function testStorage() {
         var myOldValue: { x: number } = changes["myKey"].oldValue;
     });
 }
+
+function test_chrome_accessibilityFeatures() {
+
+    var test_accessibilityFeatures_setting = function (setting: chrome.accessibilityFeatures.AccessibilityFeaturesSetting) {
+        var accessibilityFeatures_get_callback = function (details: chrome.accessibilityFeatures.AccessibilityFeaturesCallbackArg) {
+            var value = details.value;
+            var levelOfControl = details.levelOfControl;
+            if (levelOfControl === "not_controllable") {
+                var levelOfControl_is_not_controllable = true;
+            } else if (levelOfControl === "controlled_by_other_extensions") {
+                var levelOfControl_is_controlled_by_other_extensions = true;
+            } else if (levelOfControl === "controllable_by_this_extension") {
+                var levelOfControl_is_controllable_by_this_extension = true;
+            } else if (levelOfControl === "controlled_by_this_extension") {
+                var levelOfControl_is_controlled_by_this_extension = true;
+            }
+            if ("incognitoSpecific" in details) {
+                var incognitoSpecific = details.incognitoSpecific;
+            }
+        };
+
+        setting.get({}, accessibilityFeatures_get_callback);
+        setting.get({ incognito: false }, accessibilityFeatures_get_callback);
+
+        setting.set({ value: "some_string_value" });
+        setting.set({ value: "some_string_value", scope: "regular" });
+        setting.set({ value: "some_string_value", scope: "regular_only" });
+        setting.set({ value: "some_string_value", scope: "incognito_persistent" });
+        setting.set({ value: "some_string_value", scope: "incognito_session_only" });
+        setting.set({ value: "some_string_value" }, function () { });
+        setting.set({ value: "some_string_value", scope: "regular" }, function () { });
+        setting.set({ value: "some_string_value", scope: "regular_only" }, function () { });
+        setting.set({ value: "some_string_value", scope: "incognito_persistent" }, function () { });
+        setting.set({ value: "some_string_value", scope: "incognito_session_only" }, function () { });
+
+        setting.set({ value: 42 });
+        setting.set({ value: 42, scope: "regular" });
+        setting.set({ value: 42, scope: "regular_only" });
+        setting.set({ value: 42, scope: "incognito_persistent" });
+        setting.set({ value: 42, scope: "incognito_session_only" });
+        setting.set({ value: 42 }, function () { });
+        setting.set({ value: 42, scope: "regular" }, function () { });
+        setting.set({ value: 42, scope: "regular_only" }, function () { });
+        setting.set({ value: 42, scope: "incognito_persistent" }, function () { });
+        setting.set({ value: 42, scope: "incognito_session_only" }, function () { });
+
+        setting.clear({});
+        setting.clear({ scope: "regular"});
+        setting.clear({ scope: "regular_only"});
+        setting.clear({ scope: "incognito_persistent"});
+        setting.clear({ scope: "incognito_session_only" });
+        setting.clear({}, function () { });
+        setting.clear({ scope: "regular" }, function () { });
+        setting.clear({ scope: "regular_only" }, function () { });
+        setting.clear({ scope: "incognito_persistent" }, function () { });
+        setting.clear({ scope: "incognito_session_only" }, function () { });
+    }
+
+    test_accessibilityFeatures_setting(chrome.accessibilityFeatures.spokenFeedback);
+    test_accessibilityFeatures_setting(chrome.accessibilityFeatures.largeCursor);
+    test_accessibilityFeatures_setting(chrome.accessibilityFeatures.stickyKeys);
+    test_accessibilityFeatures_setting(chrome.accessibilityFeatures.highContrast);
+    test_accessibilityFeatures_setting(chrome.accessibilityFeatures.screenMagnifier);
+    test_accessibilityFeatures_setting(chrome.accessibilityFeatures.autoclick);
+    test_accessibilityFeatures_setting(chrome.accessibilityFeatures.virtualKeyboard);
+    test_accessibilityFeatures_setting(chrome.accessibilityFeatures.caretHighlight);
+    test_accessibilityFeatures_setting(chrome.accessibilityFeatures.cursorHighlight);
+    test_accessibilityFeatures_setting(chrome.accessibilityFeatures.focusHighlight);
+    test_accessibilityFeatures_setting(chrome.accessibilityFeatures.selectToSpeak);
+    test_accessibilityFeatures_setting(chrome.accessibilityFeatures.switchAccess);
+    test_accessibilityFeatures_setting(chrome.accessibilityFeatures.animationPolicy);
+}
