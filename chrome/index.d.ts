@@ -2748,6 +2748,51 @@ declare namespace chrome.extension {
 }
 
 ////////////////////
+// Extension Types
+////////////////////
+/*
+ * The chrome.extensionTypes API contains type declarations for Chrome extensions.
+ * Availability: Since Chrome 39.
+ */
+declare namespace chrome.extensionTypes {
+    /** The format of an image. */
+    type ImageFormat = "jpeg" | "png";
+
+    /** Details about the format and quality of an image. */
+    interface ImageDetails {
+        /** Optional. The format of the resulting image. Default is "jpeg". */
+        format?: ImageFormat;
+        /** Optional. When format is "jpeg", controls the quality of the resulting image. This value is ignored for PNG images. As quality is decreased, the resulting image will have more visual artifacts, and the number of bytes needed to store it will decrease. */
+        quality?: number;
+    }
+
+    /** The soonest that the JavaScript or CSS will be injected into the tab. */
+    type RunAt = "document_start" | "document_end" | "document_idle";
+
+    /** Details of the script or CSS to inject. Either the code or the file property must be set, but both may not be set at the same time. */
+    interface InjectDetails {
+        /*
+         * Optional. JavaScript or CSS code to inject.
+         * Warning: Be careful using the code parameter. Incorrect use of it may open your extension to cross site scripting attacks.
+         */
+        code?: string;
+        /** Optional. JavaScript or CSS file to inject. */
+        file?: string;
+        /** Optional. If allFrames is true, implies that the JavaScript or CSS should be injected into all frames of current page. By default, it's false and is only injected into the top frame. If true and frameId is set, then the code is inserted in the selected frame and all of its child frames. */
+        allFrames?: boolean;
+        /*
+         * Since Chrome 50.
+         * The frame where the script or CSS should be injected. Defaults to 0 (the top-level frame).
+         */
+        frameId?: number;
+        /** Optional. If matchAboutBlank is true, then the code is also injected in about:blank and about:srcdoc frames if your extension has access to its parent document. Code cannot be inserted in top-level about:-frames. By default it is false. */
+        matchAboutBlank?: boolean;
+        /** Optional. The soonest that the JavaScript or CSS will be injected into the tab. Defaults to "document_idle". */
+        runAt?: RunAt;
+    }
+}
+
+////////////////////
 // File Browser Handler
 ////////////////////
 /**
@@ -2760,7 +2805,7 @@ declare namespace chrome.fileBrowserHandler {
     interface SelectionParams {
         /**
          * Optional.
-          * List of file extensions that the selected file can have. The list is also used to specify what files to be shown in the select file dialog. Files with the listed extensions are only shown in the dialog. Extensions should not include the leading '.'. Example: ['jpg', 'png']
+         * List of file extensions that the selected file can have. The list is also used to specify what files to be shown in the select file dialog. Files with the listed extensions are only shown in the dialog. Extensions should not include the leading '.'. Example: ['jpg', 'png']
          * Since Chrome 23.
          */
         allowedFileExtensions?: string[];
