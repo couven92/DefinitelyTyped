@@ -2507,6 +2507,8 @@ declare namespace chrome.enterprise.platformKeys {
  * Availability: Since Chrome 21.
  */
 declare namespace chrome.events {
+    type PortListItem = number | number[];
+
     /** Filters URLs for various criteria. See event filtering. All criteria are case sensitive. */
     interface UrlFilter {
         /** Optional. Matches if the scheme of the URL is equal to any of the schemes specified in the array.  */
@@ -2550,7 +2552,7 @@ declare namespace chrome.events {
         /** Optional. Matches if the URL (without fragment identifier) ends with a specified string. Port numbers are stripped from the URL if they match the default port number.  */
         urlSuffix?: string;
         /** Optional. Matches if the port of the URL is contained in any of the specified port lists. For example [80, 443, [1000, 1200]] matches all requests on port 80, 443 and in the range 1000-1200.  */
-        ports?: any[];
+        ports?: PortListItem[];
         /**
          * Optional.
           * Since Chrome 28.
